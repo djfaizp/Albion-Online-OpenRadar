@@ -1,6 +1,23 @@
 package photon
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/segmentio/encoding/json"
+)
+
+// Hashtable serializes with stringified keys; json.Marshal does not accept
+// map[interface{}]interface{}.
+type Hashtable map[interface{}]interface{}
+
+func (h Hashtable) MarshalJSON() ([]byte, error) {
+	out := make(map[string]interface{}, len(h))
+	for k, v := range h {
+		out[fmt.Sprintf("%v", k)] = v
+	}
+	return json.Marshal(out)
+}
 
 // ByteArray serializes as {"type":"Buffer","data":[...]} because the web
 // front-end parses byte arrays assuming the Node.js Buffer shape.

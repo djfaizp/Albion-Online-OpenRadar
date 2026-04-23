@@ -780,5 +780,14 @@ describe('MobsHandler', () => {
             handler.NewMobEvent(normalizeParams({'0': 9402, '1': 94, '2': 255, '7': [5, 5], '13': 1, '32': 'MISTS_SOLO_YELLOW', '33': 0}));
             expect(handler.getSize().mists).toBe(1);
         });
+
+        // @verified 2026-04-23: feu follet rarity arrives via Parameters[33] at live time; pcap fixtures only sample Common so fixture value stays 0, but live evidence confirms the path is correct (user sees green mist_1 for Peu commun wisps).
+        test('MIST-6: AddMist forwards Parameters[33] to Mist.enchant', () => {
+            handler.NewMobEvent(normalizeParams({'0': 9410, '1': 94, '2': 255, '7': [0, 0], '13': 1, '32': 'MISTS_SOLO_YELLOW', '33': 0}));
+            expect(handler.mistList[0].enchant).toBe(0);
+
+            handler.NewMobEvent(normalizeParams({'0': 9411, '1': 94, '2': 255, '7': [0, 0], '13': 1, '32': 'MISTS_SOLO_YELLOW', '33': 1}));
+            expect(handler.mistList[1].enchant).toBe(1);
+        });
     });
 });

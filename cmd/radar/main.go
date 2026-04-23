@@ -194,6 +194,7 @@ func newApp(
 		app.onPhotonResponse,
 	)
 	app.photonParser.OnEncrypted = app.onPhotonEncrypted
+	app.photonParser.OnParseError = app.onPhotonParseError
 
 	app.capturer.OnPacket(app.handlePacket)
 
@@ -267,11 +268,22 @@ func (app *App) updateStats() {
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
+	pcapStatsTick := 0
+	const pcapStatsEvery = 30 // seconds
+
 	for {
 		select {
 		case <-app.ctx.Done():
 			return
 		case <-ticker.C:
+			pcapStatsTick++
+			if pcapStatsTick >= pcapStatsEvery && app.capturer != nil {
+				pcapStatsTick = 0
+				if s, err := app.capturer.Stats(); err == nil && s != nil {
+					logger.PrintInfo("PKT", "kernel stats: received=%d dropped=%d ifdropped=%d",
+						s.PacketsReceived, s.PacketsDropped, s.PacketsIfDropped)
+				}
+			}
 			if app.program != nil {
 				var m runtime.MemStats
 				runtime.ReadMemStats(&m)
@@ -306,15 +318,17 @@ func (app *App) updateStats() {
 }
 
 func (app *App) handlePacket(payload []byte) {
-	if !app.photonParser.ReceivePacket(payload) {
-		atomic.AddUint64(&app.packetsErrors, 1)
-		errCount := atomic.LoadUint64(&app.packetsErrors)
-		if errCount%100 == 1 {
-			logger.PrintWarn("PKT", "Parsing errors: %d", errCount)
-		}
-		return
+	if app.photonParser.ReceivePacket(payload) {
+		atomic.AddUint64(&app.packetsProcessed, 1)
 	}
-	atomic.AddUint64(&app.packetsProcessed, 1)
+}
+
+func (app *App) onPhotonParseError(reason string, payloadLen int) {
+	n := atomic.AddUint64(&app.packetsErrors, 1)
+	if n%100 == 1 {
+		logger.PrintWarn("PKT", "Parsing errors: %d (last reason: %s, payload len: %d)",
+			n, reason, payloadLen)
+	}
 }
 
 func (app *App) onPhotonEvent(event *photon.EventData) {

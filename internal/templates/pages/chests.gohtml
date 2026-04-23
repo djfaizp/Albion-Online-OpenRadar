@@ -13,7 +13,7 @@
         <i data-lucide="construction" class="w-5 h-5 text-warning"></i>
         <div>
             <h3 class="font-bold text-warning">Experimental features</h3>
-            <p class="text-sm">Chests, Mists & Dungeons detection is still a work in progress. Some elements may not display correctly or at all.</p>
+            <p class="text-sm">Chests detection is still a work in progress. Some elements may not display correctly or at all.</p>
         </div>
     </div>
 
@@ -132,6 +132,20 @@
                     <div class="tooltip" data-tip="Display wisp cages locations in mists">
                         <i data-lucide="info" class="w-4 h-4 opacity-50"></i>
                     </div>
+                </label>
+
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-secondary/10 border border-secondary/20 cursor-pointer group hover:bg-secondary/20 transition-colors mt-2">
+                    <input type="checkbox" id="settingWispSpawn" class="checkbox checkbox-secondary">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-secondary"></i>
+                    <span class="text-base-content/80 group-hover:text-base-content transition-colors font-medium">Wisp signs (pre-portal)</span>
+                    <div class="tooltip" data-tip="Display wisp spawn signs that appear before a mist portal opens">
+                        <i data-lucide="info" class="w-4 h-4 opacity-50"></i>
+                    </div>
+                </label>
+
+                <label class="flex items-center gap-2 px-3 py-1.5 rounded bg-base-300 cursor-pointer hover:bg-base-300/70 transition-colors mt-1">
+                    <input type="checkbox" id="settingWispSpawnDebugID" class="checkbox checkbox-primary checkbox-xs">
+                    <span class="text-sm text-base-content/80">Show wisp ID (debug)</span>
                 </label>
             </div>
         </div>
@@ -260,7 +274,7 @@
             ["settingChestGreen", "settingChestBlue", "settingChestPurple", "settingChestYellow"].forEach(bindCheckbox);
 
             // Mists
-            ["settingMistSolo", "settingMistDuo", "settingMistE0", "settingMistE1", "settingMistE2", "settingMistE3", "settingMistE4", "settingCage"].forEach(bindCheckbox);
+            ["settingMistSolo", "settingMistDuo", "settingMistE0", "settingMistE1", "settingMistE2", "settingMistE3", "settingMistE4", "settingCage", "settingWispSpawn", "settingWispSpawnDebugID"].forEach(bindCheckbox);
 
             // Dungeons
             ["settingDungeonSolo", "settingDungeonDuo", "settingDungeonE0", "settingDungeonE1", "settingDungeonE2", "settingDungeonE3", "settingDungeonE4", "settingDungeonCorrupted", "settingDungeonHellgate"].forEach(bindCheckbox);

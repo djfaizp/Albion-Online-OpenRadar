@@ -5,6 +5,7 @@ import {ChestsDrawing} from '../drawings/ChestsDrawing.js';
 import {DungeonsDrawing} from '../drawings/DungeonsDrawing.js';
 import {MapDrawing} from '../drawings/MapsDrawing.js';
 import {WispCageDrawing} from '../drawings/WispCageDrawing.js';
+import {MistsWispDrawing} from '../drawings/MistsWispDrawing.js';
 import {FishingDrawing} from '../drawings/FishingDrawing.js';
 
 import {PlayersHandler} from '../handlers/PlayersHandler.js';
@@ -42,7 +43,7 @@ let handlers = {
 
 let drawings = {
     harvestables: null, mobs: null, players: null, chests: null,
-    dungeons: null, wispCage: null, fishing: null, maps: null
+    dungeons: null, wispCage: null, mistsWisp: null, fishing: null, maps: null
 };
 
 let drawingUtils = null;
@@ -99,7 +100,8 @@ function initializeRadarRenderer() {
             chestsDrawing: drawings.chests,
             dungeonsDrawing: drawings.dungeons,
             wispCageDrawing: drawings.wispCage,
-            fishingDrawing: drawings.fishing
+            fishingDrawing: drawings.fishing,
+            mistsWispDrawing: drawings.mistsWisp
         },
         drawingUtils
     });
@@ -164,11 +166,13 @@ export async function initRadar() {
         drawings.chests = new ChestsDrawing();
         drawings.dungeons = new DungeonsDrawing();
         drawings.wispCage = new WispCageDrawing();
+        drawings.mistsWisp = new MistsWispDrawing();
         drawings.fishing = new FishingDrawing();
 
         window.harvestablesHandler = handlers.harvestables;
         window.mobsHandler = handlers.mobs;
         window.playersHandler = handlers.players;
+        window.handlers = handlers;
 
         EventRouter.init({
             handlers: {
@@ -201,7 +205,7 @@ export async function initRadar() {
                     EventRouter.onEvent(params);
                     break;
                 case 'response':
-                    EventRouter.onResponse(params, () => clearHandlers());
+                    EventRouter.onResponse(params, () => clearHandlers(true));
                     break;
             }
         });
@@ -290,6 +294,7 @@ export function destroyRadar() {
     window.harvestablesHandler = null;
     window.mobsHandler = null;
     window.playersHandler = null;
+    window.handlers = null;
     window.radarRenderer = null;
 
     PlayerListRenderer.reset();

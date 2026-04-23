@@ -85,7 +85,8 @@ export class DungeonsHandler
         const id = parameters[0];
         const position = parameters[1];
         const name = parameters[3];
-        const enchant = parameters[6];
+        // Parameters[8] is the enchant (0-4); Parameters[6] is a type/variant id.
+        const enchant = parameters[8] ?? 0;
 
         this.addDungeon(id, position[0], position[1], name, enchant);
     }
@@ -97,14 +98,28 @@ export class DungeonsHandler
             return;
         }
 
-        const lowerCaseName = name.toLowerCase(name);
+        const upperCaseName = name.toUpperCase();
+        const lowerCaseName = name.toLowerCase();
         // eslint-disable-next-line no-useless-assignment
         let dungeonType = undefined;
 
+        // MISTS portals route through the Mists settings, not Dungeon settings.
+        if (upperCaseName.startsWith("MISTS_"))
+        {
+            const isSolo = upperCaseName.includes("_SOLO_");
+
+            if (isSolo) {
+                if (!settingsSync.getBool("settingMistSolo") || !settingsSync.getBool("settingMistE" + enchant)) return;
+                dungeonType = DungeonType.Solo;
+            } else {
+                if (!settingsSync.getBool("settingMistDuo") || !settingsSync.getBool("settingMistE" + enchant)) return;
+                dungeonType = DungeonType.Group;
+            }
+        }
         // Corrupted dungeons have "solo" in their names
         // So check before solo to avoid problems
         // "CORRUPTED_SOLO"
-        if (lowerCaseName.includes("corrupted")) // corrupt
+        else if (lowerCaseName.includes("corrupted")) // corrupt
         {
             // Test if corrupt checkbox
             if (!settingsSync.getBool("settingDungeonCorrupted")) return;

@@ -22,7 +22,7 @@ const (
 	SnapLen     = 65536
 	Promiscuous = false
 	// BlockForever deadlocks handle.Close() when idle; poll on timeout
-	ReadTimeout = 500 * time.Millisecond
+	ReadTimeout = 100 * time.Millisecond
 )
 
 // NetworkInterface represents a network interface with its details
@@ -122,6 +122,13 @@ func (c *Capturer) processPacket(packet gopacket.Packet) {
 
 func (c *Capturer) BytesReceived() uint64 {
 	return atomic.LoadUint64(&c.bytesReceived)
+}
+
+func (c *Capturer) Stats() (*pcap.Stats, error) {
+	if c.handle == nil {
+		return nil, nil
+	}
+	return c.handle.Stats()
 }
 
 // resolveAdapter gets the IP and device name, with retry logic
