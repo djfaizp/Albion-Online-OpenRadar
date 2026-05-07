@@ -24,6 +24,7 @@
 - [ ] **Chests**: rarity drawing-layer wiring (CHEST-2 stored the value at #75, drawing still does substring matches on `chestName`). Plus identify the real rarity source slot (CHEST-1): current `Parameters[5]` is 4 for Mists treasure, 8 for FactionWarfare, never lands in 0-3. Pcap capture across the four rarity levels needed before fixing.
 - [ ] **Fishing**: end-of-fishing state, fishing zones on the radar.
 - [ ] **Mists routing**: cases for events 518 (NewMistsImmediateReturnExit), 519 (MistsPlayerJoinedInfo), 520 (NewMistsStaticEntrance), 529 (MistsEntranceDataChanged) reach the frontend but no handler consumes them.
+- [ ] **Brecilien ecosystem (#117)**: Mist Of Brecilien wrongly classified Safe (PR #103 inheritance hole when origin is `safe`), Roads of Avalon one-way exit drops player events. Consolidates #112, #108, #102. Blocked on 50K Brecilien Standing for pcap captures.
 
 ### Maps
 
